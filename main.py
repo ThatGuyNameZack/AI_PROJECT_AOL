@@ -66,5 +66,17 @@ def classify_image():
         "classification": result
     })
 
+
+#its a fix for the error 404
+@app.route('/')
+def home():
+    return "Welcome to the Image Classification API!"
+
+@app.route('/classify', methods=['POST'])
+def classify():
+    # your existing classify function code...
+    return jsonify({"message": "Classification logic goes here"})
+
+
 if __name__ == '__main__':
     app.run(debug=True)

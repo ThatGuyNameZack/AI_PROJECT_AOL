@@ -3,7 +3,7 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
-app = Flask(__name__)
+app = Flask("ImageClassification")
 
 # Step 1: Define fuzzy variables for brightness and sharpness
 brightness = ctrl.Antecedent(np.arange(0, 101, 1), 'brightness')
@@ -70,7 +70,7 @@ def classify_image():
 #its a fix for the error 404
 @app.route('/')
 def home():
-    return "Welcome to the Image Classification API!"
+    return "Welcome to the Image Classification"
 
 @app.route('/classify', methods=['POST'])
 def classify():
@@ -78,5 +78,5 @@ def classify():
     return jsonify({"message": "Classification logic goes here"})
 
 
-if __name__ == '__main__':
+if "ImageFilter" == 'main':
     app.run(debug=True)

@@ -12,7 +12,8 @@ def fuzz_class(ssim_value):
     good_stuff = fuzz.interp_stuff([0.1], good, ssim_value)
     bad_stuff = fuzz.interp_stuff([0.1], bad, ssim_value)
         
-    #we comapre stuff in this, ><
+    #we comapre stuff in this, >< 
+    #we needed this so if the image we put which is value is bigger
     if good_stuff > bad_stuff:
         
         return "good"

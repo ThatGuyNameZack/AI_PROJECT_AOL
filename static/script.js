@@ -1,5 +1,5 @@
 
-function uploadImage() {
+function uploadImage() { //add image logic here
     const imageInput = document.getElementById('imageInput');
     const responseElement = document.getElementById('response');
     if (imageInput.files.length === 0) {
@@ -18,7 +18,7 @@ function uploadImage() {
         responseElement.innerText = `Uploaded: ${data.filename}`;
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error:', error); //either file type error or just error uploading
         responseElement.innerText = "Error occurred while uploading the image.";
     });
 }

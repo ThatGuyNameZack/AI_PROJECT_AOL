@@ -40,6 +40,29 @@ good_folder = "/cat_folder"
 bad_folder = "/dog_folder"
 references = "/reference"
 
+os.makedirs(good_folder, exist_ok=True)
+os.makedir(bad_folder, exist_ok=True)
+
+for filename in os.listdir(unclass_folder):
+    if filename.endswith(".jpg") or filename.endswith(".png"):
+        image_path = os.makedirs(unclass_folder, filename)
+        image = cv2.imread(image_path)
+        
+    ssim_value = calculate_ssim(references, image)
+    
+    
+    classification = fuzz_class(ssim_value)
+    
+    if classification == "good":
+        cv2.imwrite(os.path.join(good_folder, filename), image)
+    else:
+        cv2.imwrite(os.path.join(bad_folder, filename), image)
+        
+        
+print(f"Image {filename} classified as {classification}.")
+
+    
+            
 
 #example of the SSIM value when comparing image
 # ssim_value = 0.75

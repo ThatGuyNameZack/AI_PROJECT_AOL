@@ -9,13 +9,13 @@ def fuzz_class(ssim_value):
     good =  fuzz.trimf(np.array([0, 0.7, 1], [0.5, 6, 1]))
     bad =  fuzz.trimf(np.array([0, 0.7, 1], [0, 0.3, 0.6]))
     
-    good_stuff = fuzz.intern_membership(np.array([0, 0.7,0.1 ]), good, ssim_value)
-    bad_stuff = fuzz.intern_membership(np.array([0, 0.7, 0.1]), bad, ssim_value)
+    good_membership = fuzz.intern_membership(np.array([0, 0.7,0.1 ]), good, ssim_value)
+    bad_membership = fuzz.intern_membership(np.array([0, 0.7, 0.1]), bad, ssim_value)
     
         
     #we comapre stuff in this, >< 
     #we needed this so if the image we put which is value is bigger
-    if good_stuff > bad_stuff:
+    if good_membership > bad_membership:
         
         return "good"
     else: 

@@ -1,12 +1,12 @@
 import numpy as np 
 import skfuzzy as fuzz
-import os
+#import os
 # import cv2
 
 # logic  
 # ssim is basically similiarity stuff, if they foudn alsmot have the same value they just comapre it
 def fuzz_class(ssim_value):
-    good =  fuzz.trimf(np.array[0, 0.7, 1]), [0.5, 6, 1]
+    good =  fuzz.trimf(np.array(0, 0.7, 1)), [0.5, 6, 1]
     bad =  fuzz.trimf(np.array[0, 0.7, 1]), [0, 0.3, 0.6]
     
     good_stuff = fuzz.interp_stuff([0.1], good, ssim_value)

@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 
 # Load your trained model (change the path as needed)
-model = load_model('path/to/your/model.h5')
+model = load_model('/brands')
 
 # Define a function to preprocess the image for the model
 def preprocess_image(image):

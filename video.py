@@ -7,10 +7,10 @@ from numpy import pi, sin, cos
 import cv2
 
 # built-in modules
-from time import clock
+from time import perf_counter as clock
 
 # local modules
-import common
+import common  
 
 class VideoSynthBase(object):
     def __init__(self, size=None, noise=0.0, bg = None, **params):

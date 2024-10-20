@@ -193,7 +193,7 @@ class RectSelector:
 
 
 def grouper(n, iterable, fillvalue=None):
-    '''grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx'''
+   # '''grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx'''
     args = [iter(iterable)] * n
     if PY3:
         output = it.zip_longest(fillvalue=fillvalue, *args)
@@ -202,11 +202,10 @@ def grouper(n, iterable, fillvalue=None):
     return output
 
 def mosaic(w, imgs):
-    '''Make a grid from images.
-
-    w    -- number of grid columns
-    imgs -- images (must have same size and format)
-    '''
+   
+    #w    -- number of grid columns
+    #imgs -- images (must have same size and format)
+   
     imgs = iter(imgs)
     if PY3:
         img0 = next(imgs)

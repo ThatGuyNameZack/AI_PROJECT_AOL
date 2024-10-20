@@ -13,15 +13,15 @@ from collections import namedtuple
 
 # local modules, basically in our folder any name suffice
 import video
-import stuff
+import common   
 
 
 FLANN_INDEX_KDTREE = 1
 FLANN_INDEX_LSH    = 6
 flann_params= dict(algorithm = FLANN_INDEX_LSH,
-                   table_number = 6, # 12
+                   table_number = 6,  # 12
                    key_size = 12,     # 20
-                   multi_probe_level = 1) #2
+                   multi_probe_level = 1)  # 2
 
 MIN_MATCH_COUNT = 10
 
@@ -39,19 +39,19 @@ PlanarTarget = namedtuple('PlaneTarget', 'image, rect, keypoints, descrs, data')
   p0     - matched points coords in target image
   p1     - matched points coords in input frame
   H      - homography matrix from p0 to p1
-  quad   - target bounary quad in input frame
+  quad   - target boundary quad in input frame
 '''
 TrackedTarget = namedtuple('TrackedTarget', 'target, p0, p1, H, quad')
 
 class PlaneTracker:
     def __init__(self):
-        self.detector = cv2.ORB_create( nfeatures = 1000 )
-        self.matcher = cv2.FlannBasedMatcher(flann_params, {})  # bug : need to pass empty dict (#1329)
+        self.detector = cv2.ORB_create(nfeatures=1000)
+        self.matcher = cv2.FlannBasedMatcher(flann_params, {})  # Bug fix: pass an empty dict
         self.targets = []
         self.frame_points = []
 
     def add_target(self, image, rect, data=None):
-       #make a new target
+        # Make a new target
         x0, y0, x1, y1 = rect
         raw_points, raw_descrs = self.detect_features(image)
         points, descs = [], []
@@ -62,27 +62,41 @@ class PlaneTracker:
                 descs.append(desc)
         descs = np.uint8(descs)
         self.matcher.add([descs])
-        target = PlanarTarget(image = image, rect=rect, keypoints = points, descrs=descs, data=data)
+        target = PlanarTarget(image=image, rect=rect, keypoints=points, descrs=descs, data=data)
         self.targets.append(target)
 
     def clear(self):
-        #remove all target
+        # Remove all targets
         self.targets = []
         self.matcher.clear()
 
     def track(self, frame):
-#       Returns a list of detected of tracked target, like past targets stuff basically
-
+        # Detect features in the frame
         self.frame_points, frame_descrs = self.detect_features(frame)
-        if len(self.frame_points) < MIN_MATCH_COUNT:
+
+        # Check if enough keypoints were detected
+        if len(self.frame_points) < MIN_MATCH_COUNT or len(frame_descrs) == 0:
             return []
-        matches = self.matcher.knnMatch(frame_descrs, k = 2)
+
+        # Ensure frame_descrs is continuous
+        frame_descrs = np.ascontiguousarray(frame_descrs, dtype=np.uint8)
+
+        # Perform KNN matching
+        matches = self.matcher.knnMatch(frame_descrs, k=2)
+
+        # Filter matches using Lowe's ratio test
         matches = [m[0] for m in matches if len(m) == 2 and m[0].distance < m[1].distance * 0.75]
+
+        # If not enough matches, return an empty list
         if len(matches) < MIN_MATCH_COUNT:
             return []
+
+        # Group matches by target index
         matches_by_id = [[] for _ in xrange(len(self.targets))]
         for m in matches:
             matches_by_id[m.imgIdx].append(m)
+
+        # Track each target
         tracked = []
         for imgIdx, matches in enumerate(matches_by_id):
             if len(matches) < MIN_MATCH_COUNT:
@@ -91,25 +105,31 @@ class PlaneTracker:
             p0 = [target.keypoints[m.trainIdx].pt for m in matches]
             p1 = [self.frame_points[m.queryIdx].pt for m in matches]
             p0, p1 = np.float32((p0, p1))
+
+            # Estimate homography
             H, status = cv2.findHomography(p0, p1, cv2.RANSAC, 3.0)
             status = status.ravel() != 0
             if status.sum() < MIN_MATCH_COUNT:
                 continue
             p0, p1 = p0[status], p1[status]
 
+            # Perspective transformation
             x0, y0, x1, y1 = target.rect
             quad = np.float32([[x0, y0], [x1, y0], [x1, y1], [x0, y1]])
             quad = cv2.perspectiveTransform(quad.reshape(1, -1, 2), H).reshape(-1, 2)
 
+            # Add the tracked target
             track = TrackedTarget(target=target, p0=p0, p1=p1, H=H, quad=quad)
             tracked.append(track)
-        tracked.sort(key = lambda t: len(t.p0), reverse=True)
+
+        # Sort tracked targets by the number of matched points
+        tracked.sort(key=lambda t: len(t.p0), reverse=True)
         return tracked
 
     def detect_features(self, frame):
         '''detect_features(self, frame) -> keypoints, descrs'''
         keypoints, descrs = self.detector.detectAndCompute(frame, None)
-        if descrs is None:  # detectAndCompute returns descs=None if not keypoints found
+        if descrs is None:  # detectAndCompute returns descs=None if no keypoints are found
             descrs = []
         return keypoints, descrs
 
@@ -151,7 +171,7 @@ class App:
                 self.paused = not self.paused
             if ch == ord('c'):
                 self.tracker.clear()
-            if ch == 27:
+            if ch == 27:  # Escape key
                 break
 
 if __name__ == '__main__':

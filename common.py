@@ -1,5 +1,13 @@
+
+import site
+site.getsitepackages()
+
+import sys
+
 import cv2
 from matplotlib import pyplot as plt
+
+#img cv2.imread("") read path files depends on th epath file you use
 
 cam = cv2.VideoCapture(0)
 

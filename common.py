@@ -7,7 +7,12 @@ import sys
 import cv2
 from matplotlib import pyplot as plt
 
+
 #img cv2.imread("") read path files depends on th epath file you use
+#were lacking the video camera settings
+#path for the kaggle dataset
+#we could try to use server method for data set
+
 
 cam = cv2.VideoCapture(0)
 

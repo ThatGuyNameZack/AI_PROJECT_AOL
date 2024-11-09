@@ -1,8 +1,10 @@
+import tracking
+import config
 
 import site
 site.getsitepackages()
+import sys #incase of different version
 
-import sys
 
 import cv2
 from matplotlib import pyplot as plt
@@ -30,7 +32,7 @@ while True:
     if cv2.waitKey(1)==ord("p"):
         break #it closes the camer if i i press p.
 
-plt.show()
+#plt.show()
 cam.release()
 cv2.destroyAllWindows()
 

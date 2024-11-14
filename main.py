@@ -2,6 +2,9 @@
 import site
 import sys
 import cv2
+import numpy as np
+import os #it will work windows or unix machines
+from engage import predict_emotion
 
 print(site.getsitepackages())  # Print site packages for debugging
 
@@ -18,6 +21,14 @@ base_dir  = os.path.dirname(os.path.realpath(__file__))
 face_cascade_path = os.path.join(base_dir, 'haarcascade_frontalface_default.xml')
 face_cascade = cv2.CascadeClassifier(face_cascade_path)
 
+def preprocess_frame(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    frame_resized = cv2.resize(frame, (64, 64))
+    frame_resized = frame_resized / 255.0
+    frame_resized = frame_resized.reshape(1, 64, 64, 3)
+
+    return frame_resized
 # Main loop to read frames from the camera
 while True:
     ret, frame = cam.read()
@@ -25,10 +36,20 @@ while True:
         print("Error: Could not read frame.")
         break
 
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Detect faces
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+    
+    processed_frame = preprocess_frame(frame)
+    prediction = predict_emotion(processed_frame)
+    emotion = np.argmax(prediction)
+    
+    emotion_labels = ['Engaged', 'Confused', 'Frustrated', 'Bored', 'Drowsy', 'Looking Away']
+    emotion_text = emotion_labels[emotion]
+    
+    cv2.putText(frame, str(emotion_text), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Draw white box around faces
     for (x, y, w, h) in faces:

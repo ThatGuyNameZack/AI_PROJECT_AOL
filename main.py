@@ -1,8 +1,8 @@
-import config
+
 import site
 import sys 
 import cv2
-import tracking
+
 print(site.getsitepackages())  # Print site packages for debugging
  # In case of different version dependencie
 
@@ -29,9 +29,6 @@ while True:
         break
     
     
-if __name__ == "__main__":
-    print("Running TrackingObject() from main.py")
-    tracking.TrackingObject()
 # Release the camera and close all windows
 cam.release()
 cv2.destroyAllWindows()

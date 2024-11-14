@@ -2,16 +2,13 @@ import config
 import site
 import sys 
 import cv2
+import tracking
 print(site.getsitepackages())  # Print site packages for debugging
- # In case of different version dependencies
-
-
-if 'tracking' not in locals():
-    import tracking
+ # In case of different version dependencie
 
 
 cam = cv2.VideoCapture(0)
-
+print("tracking modelue imported.")
 
 if not cam.isOpened():
     print("Error: Could not open camera.")
@@ -30,7 +27,11 @@ while True:
     # Press 'p' to exit the loop and close the camera
     if cv2.waitKey(1) == ord("p"):
         break
-
+    
+    
+if __name__ == "__main__":
+    print("Running TrackingObject() from main.py")
+    tracking.TrackingObject()
 # Release the camera and close all windows
 cam.release()
 cv2.destroyAllWindows()

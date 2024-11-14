@@ -1,4 +1,4 @@
-import main #so it will connect to
+import main #so it will connect to main.yp
 import cv2
 import dnn
 

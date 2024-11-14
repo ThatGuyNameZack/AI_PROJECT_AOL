@@ -1,21 +1,19 @@
-
-import matplotlib
-
+import config
 import site
 print(site.getsitepackages())  # Print site packages for debugging
 import sys  # In case of different version dependencies
 
 import cv2
-from matplotlib import pyplot as plt
 
-# Conditional import for tracking
+
+
 if 'tracking' not in locals():
     import tracking
 
-# Initialize webcam (camera index 0)
+
 cam = cv2.VideoCapture(0)
 
-# Check if camera opened successfully
+
 if not cam.isOpened():
     print("Error: Could not open camera.")
     sys.exit()

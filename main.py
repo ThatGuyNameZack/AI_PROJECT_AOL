@@ -42,12 +42,28 @@ while True:
     # Detect faces
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
     
+    
+   
     processed_frame = preprocess_frame(frame)
     prediction = predict_emotion(processed_frame)
     emotion = np.argmax(prediction)
+    print("RAW PREDICTIONS: ", prediction)
     
     emotion_labels = ['Engaged', 'Confused', 'Frustrated', 'Bored', 'Drowsy', 'Looking Away']
-    emotion_text = emotion_labels[emotion]
+    
+    threshold = 0.7
+    
+    if prediction[0][emotion] < threshold:
+        emotion_text = "uncertain"
+    else:
+        emotion_text = emotion_labels[emotion]
+    
+    
+    
+    #emotion_text = emotion_labels[emotion]
+    
+    print(f"Predicted emotion: {emotion_text} with confidence {prediction[0][emotion]}")
+
     
     cv2.putText(frame, str(emotion_text), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 

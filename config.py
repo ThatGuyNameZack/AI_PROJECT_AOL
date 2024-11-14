@@ -1,9 +1,6 @@
-import main 
 import matplotlib
 import cv2
 import os
-
-#this will be used for data ser pathawy
 
 # Base directory for the project
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,10 +17,8 @@ FACE_DETECTION_MODEL = os.path.join(BASE_DIR, 'models', 'haarcascade_frontalface
 
 # Dataset-specific parameters (example)
 IMG_SIZE = (224, 224)  # Target image size for resizing
-BATCH_SIZE = 32        # Batch size for loading data
-NUM_CLASSES = 2        # Number of classes in your dataset (engaged, not engaged)
+BATCH_SIZE = 32        
+NUM_CLASSES = 2        
 
 # Other relevant configurations
 THRESHOLD = 0.5        # Confidence threshold for detections, if applicable
-
-

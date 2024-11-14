@@ -1,10 +1,9 @@
 import config
 import site
-print(site.getsitepackages())  # Print site packages for debugging
-import sys  # In case of different version dependencies
-
+import sys 
 import cv2
-
+print(site.getsitepackages())  # Print site packages for debugging
+ # In case of different version dependencies
 
 
 if 'tracking' not in locals():

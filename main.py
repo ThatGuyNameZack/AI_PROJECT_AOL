@@ -51,7 +51,12 @@ while True:
     
     emotion_labels = ['Engaged', 'Confused', 'Frustrated', 'Bored', 'Drowsy', 'Looking Away']
     
-    threshold = 0.7
+ 
+    if prediction >= 0.7:
+        print("Engaged")
+    else:
+        print("Not Engaged")
+
     
     if prediction[0][emotion] < threshold:
         emotion_text = "uncertain"

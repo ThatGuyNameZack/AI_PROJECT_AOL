@@ -25,7 +25,7 @@ def preprocess_frame(frame):
     # Convert frame to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Resize and normalize
-    frame_resized = cv2.resize(frame, (64, 64))
+    frame_resized = cv2.resize(frame, (64, 64)) /255.0
     frame_resized = frame_resized / 255.0
     frame_resized = frame_resized.reshape(1, 64, 64, 3)
     return frame_resized

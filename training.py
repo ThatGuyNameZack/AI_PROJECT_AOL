@@ -21,20 +21,48 @@ def load_images_and_labels():
     images = []
     labels = []
     
-    for label, folder in zip(['Engaged', 'Confused', 'Frustrated', 'Bored', 'Drowsy', 'Looking Away'],
-                             [engaged_dir, engaged_dir, engaged_dir, not_engaged_dir, not_engaged_dir, not_engaged_dir]):
+    base_dir = '/Users/rafisatria/Documents/GitHub/AI_PROJECT_AOL/Student-engagement-dataset/'
+    emotion_folder_map = {
+        'Engaged': os.path.join(base_dir, 'engaged/Engaged'),
+        'Confused': os.path.join(base_dir, 'engaged/Confused'),
+        'Frustrated': os.path.join(base_dir, 'engaged/Frustrated'),
+        'Bored': os.path.join(base_dir, 'not engaged/Bored'),
+        'Drowsy': os.path.join(base_dir, 'not engaged/Drowsy'),
+        'Looking Away': os.path.join(base_dir, 'not engaged/Looking Away')
+    }
+    
+    for label, folder in emotion_folder_map.items():
+        if not os.path.exists(folder):
+            print(f"Folder not found for label {label}: {folder}")
+            continue
+        
         for file in os.listdir(folder):
-            if file.endswith('.jpg') or file.endswith('.png'):
+            if not file.startswith('.') and file.lower().endswith(('.jpg', '.jpeg', '.png')):
                 img_path = os.path.join(folder, file)
                 img = cv2.imread(img_path)
-                img = cv2.resize(img, (img_width, img_height))
-                images.append(img)
-                labels.append(label)
+                if img is not None:
+                    img = cv2.resize(img, (img_width, img_height))
+                    images.append(img)
+                    labels.append(label)
+                else:
+                    print(f"Failed to load image: {img_path}")
     
+    print(f"Total images loaded: {len(images)}")
+    print(f"Total labels loaded: {len(labels)}")
     return np.array(images), np.array(labels)
+
+
+# Verify dataset directories
+for folder in [engaged_dir, not_engaged_dir]:
+    if not os.path.exists(folder) or not os.listdir(folder):
+        raise ValueError(f"Dataset folder is missing or empty: {folder}")
 
 # Load and preprocess the dataset
 X, y = load_images_and_labels()
+
+# Verify that labels were loaded correctly
+if len(y) == 0:
+    raise ValueError("No labels found. Check your dataset organization.")
 
 # Normalize images
 X = X.astype('float32') / 255.0

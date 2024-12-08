@@ -48,7 +48,7 @@ while True:
         confidence = prediction[0][emotion]
 
         emotion_labels = ['Engaged', 'Confused', 'Frustrated', 'Bored', 'Drowsy', 'Looking Away']
-        emotion_text = emotion_labels[emotion] if confidence >= threshold else "Not Engaged"
+        emotion_text = emotion_labels[emotion] if confidence >= threshold else "Distracted"
 
         print(f"RAW PREDICTIONS: {prediction}")
         print(f"Predicted emotion: {emotion_text} with confidence {confidence}")

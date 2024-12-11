@@ -2,7 +2,9 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
-from config import EMOTION_LABELS, COLOR_MAP
+from config import EMOTION_LABELS
+import io
+import base64
 
 def draw_emotion_info(frame, x, y, w, h, emotion, confidence, color):
     """
@@ -31,12 +33,16 @@ def draw_emotion_info(frame, x, y, w, h, emotion, confidence, color):
 
 def plot_emotion_confidences(emotion_avg_confidences):
     """
-    Create a bar graph of emotion confidences
+    Create a bar graph of emotion confidences and return it as base64
     
     Args:
         emotion_avg_confidences (list): Average confidences for each emotion
+    
+    Returns:
+        str: Base64 encoded image of the plot
     """
     try:
+        # Create the plot
         plt.figure(figsize=(10, 6))
         plt.bar(EMOTION_LABELS, emotion_avg_confidences, 
                 color=['green', 'orange', 'red', 'gray', 'magenta', 'yellow'])
@@ -49,7 +55,17 @@ def plot_emotion_confidences(emotion_avg_confidences):
         for i, v in enumerate(emotion_avg_confidences):
             plt.text(i, v + 0.01, f'{v:.2f}', ha='center', fontsize=10)
 
-        plt.tight_layout()
-        plt.show()
+        # Save plot to a BytesIO object
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)  # Go to the start of the image data
+        
+        # Convert to base64
+        img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
+        plt.close()  # Close the plot to free up memory
+        
+        return img_base64
+    
     except Exception as e:
         logging.error(f"Error creating bar graph: {e}")
+        return None

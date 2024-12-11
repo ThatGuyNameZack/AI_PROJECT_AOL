@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection Summary</title>
+</head>
+<body>
+    <h1>Emotion Detection Summary</h1>
+    <ul>
+        {% for emotion, conf in confidences.items() %}
+            <li>Emotion: {{ emotion }}, Confidence: {{ "%.2f" % conf }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Emotion Confidence Plot</h2>
+    <img src="data:image/png;base64,{{ plot_img }}" alt="Emotion Confidence Plot" />
+</body>
+</html>

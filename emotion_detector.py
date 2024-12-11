@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 import logging
 import sys
+import os
 import gc
+import time
 
 from config import (
     EMOTION_LABELS, COLOR_MAP, FACE_CASCADE_PATH, 
@@ -11,6 +13,7 @@ from config import (
 from preprocessing import preprocess_frame
 from visualization import draw_emotion_info
 from engage import predict_emotion
+
 
 class EmotionDetector:
     def __init__(self):
@@ -58,6 +61,18 @@ class EmotionDetector:
         self.cam.set(cv2.CAP_PROP_CONTRAST, 0.5)
         
         return True
+
+    def initialize_camera_with_retry(self, retries=3, delay=2):
+        """
+        Retry logic for camera initialization.
+        """
+        for attempt in range(retries):
+            if self.initialize_camera():
+                return True
+            logging.warning(f"Retrying camera initialization ({attempt + 1}/{retries})...")
+            time.sleep(delay)
+        logging.error("Failed to initialize the camera after retries.")
+        return False
     
     def detect_emotions(self, frame):
         """
@@ -136,14 +151,17 @@ class EmotionDetector:
         
         return frame, (final_emotion, final_confidence)
     
-    def run(self):
+    def run(self, output_dir="output_frames"):
         """
-        Main emotion detection loop
+        Main emotion detection loop. Saves frames instead of showing them.
         """
-        if not self.initialize_camera():
+        if not self.initialize_camera_with_retry():
             return
         
+        os.makedirs(output_dir, exist_ok=True)
+
         try:
+            frame_counter = 0
             while True:
                 # Read frame
                 ret, frame = self.cam.read()
@@ -154,8 +172,11 @@ class EmotionDetector:
                 # Detect and visualize emotions
                 frame, (emotion, confidence) = self.detect_emotions(frame)
                 
-                # Display the frame
-                cv2.imshow('Real-Time Emotion Detection', frame)
+                # Save frame
+                frame_path = os.path.join(output_dir, f"frame_{frame_counter:04d}.jpg")
+                cv2.imwrite(frame_path, frame)
+                logging.info(f"Frame saved: {frame_path}")
+                frame_counter += 1
                 
                 # Break loop on 'p' key press
                 if cv2.waitKey(1) & 0xFF == ord('p'):
@@ -168,7 +189,6 @@ class EmotionDetector:
             # Release resources
             if self.cam:
                 self.cam.release()
-            cv2.destroyAllWindows()
             gc.collect()
             
         return self.emotion_confidences

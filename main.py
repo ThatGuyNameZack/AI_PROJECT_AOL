@@ -1,17 +1,21 @@
 import logging
 import numpy as np
-
 from emotion_detector import EmotionDetector
 from visualization import plot_emotion_confidences
 from config import EMOTION_LABELS
 
-def main():
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+
+def run_emotion_detection():
+    """
+    Run emotion detection and return the average confidence for each emotion.
+    """
     # Initialize and run emotion detector
     detector = EmotionDetector()
     emotion_confidences = detector.run()
     
-    # Calculate and log average confidences
-    logging.info("\n--- Emotion Detection Summary ---")
+    # Calculate average confidences
     emotion_avg_confidences = []
     
     for emotion, confidences in emotion_confidences.items():
@@ -21,6 +25,5 @@ def main():
     
     # Plot emotion confidences
     plot_emotion_confidences(emotion_avg_confidences)
-
-if __name__ == "__main__":
-    main()
+    
+    return emotion_avg_confidences

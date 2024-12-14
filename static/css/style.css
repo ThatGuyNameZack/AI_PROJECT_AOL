@@ -1,0 +1,9 @@
+.header {
+    text-align: center;
+}
+
+.main{
+    display: grid;
+    align-items: center;
+    justify-content: center;
+}

@@ -4,16 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emotion Detection Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Emotion Detection Summary</h1>
-    <ul>
-        {% for emotion, conf in confidences.items() %}
-            <li>Emotion: {{ emotion }}, Confidence: {{ "%.2f" % conf }}</li>
-        {% endfor %}
-    </ul>
     
-    <h2>Emotion Confidence Plot</h2>
-    <img src="data:image/png;base64,{{ plot_img }}" alt="Emotion Confidence Plot" />
+    {% if error_message %}
+        <div class="error">
+            <p>{{ error_message }}</p>
+        </div>
+    {% else %}
+        <h2>Emotion Confidences</h2>
+        <ul style="list-style-type: none; padding: 0;">
+            {% for emotion, conf in confidences.items() %}
+                <li>
+                    <strong>{{ emotion }}:</strong> 
+                    {{ "%.2f"|format(conf) }} 
+                    ({{ (conf * 100)|round(1) }}%)
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <h2>Emotion Confidence Plot</h2>
+        {% if plot_img %}
+            <img src="data:image/png;base64,{{ plot_img }}" 
+                 alt="Emotion Confidence Plot" 
+                 style="max-width: 100%; height: auto;"/>
+        {% else %}
+            <p class="error">No plot available</p>
+        {% endif %}
+    {% endif %}
 </body>
 </html>

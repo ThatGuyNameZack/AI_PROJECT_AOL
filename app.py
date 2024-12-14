@@ -1,13 +1,22 @@
 from flask import Flask, render_template, Response
+import io
+import base64
+import logging
+import matplotlib
+matplotlib.use('Agg')  # Add this before importing pyplot
+import matplotlib.pyplot as plt
+import os
 import cv2
 import numpy as np
+
 from config import (
     EMOTION_LABELS, COLOR_MAP, FACE_CASCADE_PATH, 
     MAX_CONFIDENCE_HISTORY, MIN_CONFIDENCE_THRESHOLD,
     CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_FPS
 )
 from preprocessing import preprocess_frame
-from engage import predict_emotion  # Ensure that you have this method
+from engage import predict_emotion
+from visualization import plot_emotion_confidences  # Ensure that you have this method
 
 app = Flask(__name__)
 
@@ -71,8 +80,33 @@ def video_feed():
 
 @app.route('/emotion_summary')
 def emotion_summary():
-    """Placeholder for emotion summary processing."""
-    return "<h1>Emotion summary feature is under development.</h1>"
+    """
+    Generate and display emotion detection summary.
+    
+    Returns:
+        Rendered HTML template with emotion detection results
+    """
+    try:
+        # TODO: Replace with actual emotion detection logic to get confidences
+        emotion_avg_confidences = [0.7, 0.2, 0.1, 0.05, 0.05, 0.0]  # Example confidence values
+        
+        # Create confidences dictionary for template
+        confidences = dict(zip(EMOTION_LABELS, emotion_avg_confidences))
+        
+        # Generate the plot (using the existing plot function)
+        plot_img = plot_emotion_confidences(emotion_avg_confidences)
+        
+        # Render the template with plot and confidences
+        return render_template('emotion_summary.html', 
+                               confidences=confidences, 
+                               plot_img=plot_img)
+    
+    except Exception as e:
+        # Log the error and show a development message
+        logging.error(f"Emotion summary error: {e}")
+        return render_template('emotion_summary.html', 
+                               error_message="Emotion summary feature is still in development.")
+
 
 # Run Flask app
 if __name__ == '__main__':

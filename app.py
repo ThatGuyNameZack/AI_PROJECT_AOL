@@ -1,3 +1,4 @@
+from collections import deque
 from flask import Flask, render_template, Response
 import io
 import base64
@@ -19,6 +20,7 @@ from engage import predict_emotion
 from visualization import plot_emotion_confidences  # Ensure that you have this method
 
 app = Flask(__name__)
+confidence_history =  deque(maxlen=MAX_CONFIDENCE_HISTORY)
 
 # Initialize the camera
 camera = cv2.VideoCapture(0)

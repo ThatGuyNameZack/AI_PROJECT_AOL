@@ -74,10 +74,14 @@ def index():
 
 @app.route('/video_feed')
 def video_feed():
-    """Route for live video feed."""
     return Response(
         generate_frames(),
-        mimetype='multipart/x-mixed-replace; boundary=frame'
+        mimetype='multipart/x-mixed-replace; boundary=frame',
+        headers={
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
     )
 
 @app.route('/emotion_summary')

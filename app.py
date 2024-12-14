@@ -20,11 +20,29 @@ from engage import predict_emotion
 from visualization import plot_emotion_confidences  # Ensure that you have this method
 
 app = Flask(__name__)
-confidence_history =  deque(maxlen=MAX_CONFIDENCE_HISTORY)
+confidence_history = deque(maxlen=MAX_CONFIDENCE_HISTORY)
 
 # Initialize the camera
 camera = cv2.VideoCapture(0)
 face_cascade = cv2.CascadeClassifier(FACE_CASCADE_PATH)
+
+def draw_emotion_info(frame, x, y, w, h, emotion, confidence, color):
+    """
+    Draw bounding box and emotion information on the frame.
+    """
+    try:
+        # Draw rectangle around the face
+        cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+        
+        # Display emotion and confidence
+        display_text = f"{emotion} ({confidence:.2f})"
+        cv2.putText(
+            frame, display_text, (x, y - 10), 
+            cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2
+        )
+    except Exception as e:
+        logging.error(f"Error in draw_emotion_info: {e}")
+    return frame
 
 def generate_frames():
     while True:
@@ -34,7 +52,9 @@ def generate_frames():
         else:
             # Convert to grayscale for face detection
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+            faces = face_cascade.detectMultiScale(
+                gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+            )
             
             for (x, y, w, h) in faces:
                 # Extract and preprocess face
@@ -74,6 +94,7 @@ def index():
 
 @app.route('/video_feed')
 def video_feed():
+    """Route for live video feed."""
     return Response(
         generate_frames(),
         mimetype='multipart/x-mixed-replace; boundary=frame',
@@ -113,9 +134,9 @@ def emotion_summary():
         return render_template('emotion_summary.html', 
                                error_message="Emotion summary feature is still in development.")
 
-
 # Run Flask app
 if __name__ == '__main__':
     app.run(port=5001, debug=True, threaded=True)
+
 
 
